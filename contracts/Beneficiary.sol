@@ -3,28 +3,16 @@ pragma solidity ^0.8.9;
 
 import "hardhat/console.sol";
 
-/// @title TODO
+/// @title Mephisto
 /// @author Turan Vural and Johans Ballestar
-/// @notice TODO
-/// @dev TODO
+/// @notice trustless deadman's switch
 contract Beneficiary {
 
-  /// @notice FLOW
-  // 1. COMMAND: Mephisto store key {Payload}
-  // Deploy Beneficiary contract by calling createBeneficiary in BeneficiaryFactory, passing in a hashed private key
-  // 
-  // 2. 
-  // 3. 
-  // 4.
-  // 5.
-
   string version;
-  string payloadEndpoint;
   uint lastCheckIn;
+  uint unlockDate;
   address payable owner;
-  string payload;
-  bool lockPublishedKey;
-  bool lockPayloadEndpoint;
+  address payable beneficiary;
 
   // set the `owner` of the contract and log first `checkIn`
   constructor(address _p) {
@@ -40,18 +28,18 @@ contract Beneficiary {
     _;
   }
 
-  /// @param _key TODO
-  function initialize(string memory _key) public onlyOwner{
+  modifier defense {
+    require(msg.sender == owner || msg.sender == beneficiary);
+    _;
+  }
+
+  function initialize() public onlyOwner{
     owner = payable(msg.sender);
-    payload = _key;
-    version = "0.0.1";
+    version = "1.0.0";
     checkIn();
   }
 
-  // This function is restricted to work with only the contract owner.
-  // friends don't let friends deploy contracts that can't be killed
-  /// @notice TODO
-  /// @dev TODO
+  /// @notice This function is restricted to work with only the contract owner and kills the switch
   function kill() public onlyOwner {
     selfdestruct(owner);
   }
@@ -61,47 +49,29 @@ contract Beneficiary {
   // 900 seconds at the time of this writing, consider then when
   // setting TTL thresholds for the publisher.
   /// @notice TODO
-  /// @dev TODO
+  /// @dev only th owner can check in
   function checkIn() public onlyOwner {
     lastCheckIn = block.timestamp;
+    unlockDate = lastCheckIn + 1 years;
   }
 
-  // Outputs the `uint` for the last `block.timestamp`
-  // that registered to this contract on the blockchain.
-  /// @notice TODO
+  function ableToWithdraw() public defense {
+    require(now >= unlockDate);
+    return true;
+  }
+
+
+  /// @notice public method which returns the last time the switch was checked in
   /// @dev TODO
-  function getLastCheckIn() public view returns (uint) {
+  /// @return the `uint` for the last `block.timestamp`
+  function getLastCheckIn() public view defense returns (uint) {
     return lastCheckIn;
   }
 
-  // Outputs the `string` for the last `block.timestamp`
-  // that registered to this contract on the blockchain.
   /// @notice TODO
   /// @dev TODO
   /// @return TODO
-  function getPayloadEndpoint() public view returns (string memory) {
-    return payloadEndpoint;
-  }
-
-  // This function is restricted to work with only the contract owner.
-  // Sets the Payload Endpoint after checking max length of the string.
-  // sets lockPayloadEndpoint to TRUE so that once set, this value can
-  // not be changed.
-  // Probably don't need
-  /// @notice TODO
-  /// @dev TODO
-  function setPayloadEndpoint(string memory s) public onlyOwner {
-    uint max = 512;
-    require(bytes(s).length <= max);
-    require(lockPayloadEndpoint == false);
-    payloadEndpoint = s;
-    lockPayloadEndpoint = true;
-  }
-
-  /// @notice TODO
-  /// @dev TODO
-  /// @return TODO
-  function getOwner() public view returns (address) {
+  function getOwner() public view defense returns (address) {
     return owner;
   }
 
@@ -110,16 +80,5 @@ contract Beneficiary {
   /// @return TODO
   function getVersion() public view returns (string memory) {
     return version;
-  }
-
-  // This function is restricted to work with only the contract owner.
-  /// @notice TODO
-  /// @dev TODO
-  function setKey(string memory _key) public onlyOwner {
-    uint max = 128;
-    require(bytes(_key).length <= max);
-    require(lockPublishedKey == false);
-    payload = _key;
-    lockPublishedKey = true;
   }
 }
