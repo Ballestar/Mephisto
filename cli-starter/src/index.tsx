@@ -21,30 +21,42 @@ import abi from './Trustee.json'
 import { readFileSync } from 'fs'
 
 yargs(hideBin(process.argv))
-  .command('init', 'Initialize wallet', {}, async (argv: any) => {
-    const { env } = argv
-    const client = await Client.create(loadBIGDADDY(), { env })
-    const contractABI = abi.abi
-    console.log(contractABI)
-    const provider = new ethers.providers.WebSocketProvider(
-      `wss://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_WEBSOCKET}`
-    )
-    const signer = provider.getSigner(client.address)
-    const contract = new ethers.Contract(
-      '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
-      contractABI,
-      signer
-    )
-    contract.on('Withdraw', () => {
-      // send to little boy
-      console.log('withdraw')
+  .command(
+    'init',
+    'Initialize wallet',
+    {
+      orchid: { type: 'string', demand: true },
+      payload: { type: 'string', demand: true },
+    }
+    ,
+      async (argv: any) => {
+      const { orchid, payload, env } = argv
+      const client = await Client.create(loadBIGDADDY(), { env })
+      const contractABI = abi.abi
+      console.log(contractABI)
+      const provider = new ethers.providers.WebSocketProvider(
+        `wss://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_WEBSOCKET}`
+      )
+      const signer = provider.getSigner(client.address)
+      const contract = new ethers.Contract(
+        '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
+        contractABI,
+        signer
+      )
+      contract.on('Withdraw', async () => {
+        const client = await Client.create(loadWallet(), { env })
+        const conversation = await client.conversations.newConversation(orchid)
+        const sent = await conversation.send(payload)
+        render(<Message {...sent} />)
+        console.log('Mephistopheles has been repaid')
+      })
+      render(
+        <Text>
+          Enrolled {client.address}<br />
+          Mephistopheles is at your service
+        </Text>
+      )
     })
-    render(
-      <Text>
-        Enrolled {client.address}
-      </Text>
-    )
-  })
   .command('BIGDADDY', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     const client = await Client.create(loadBIGDADDY(), { env })
@@ -94,8 +106,7 @@ yargs(hideBin(process.argv))
     await contract.ableToWithdraw()
     render(
       <Text>
-        little boy try to withdraw money from {client.address} saved at{' '}
-        {WALLET_FILE_LOCATION}
+        little boy try to withdraw money from {client.address}
       </Text>
     )
   })
