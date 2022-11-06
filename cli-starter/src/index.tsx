@@ -4,6 +4,7 @@ import { hideBin } from 'yargs/helpers'
 import { Client } from '@xmtp/xmtp-js'
 import { render, Text } from 'ink'
 import { MessageList, MessageStream, Message } from './renderers'
+
 import {
   loadBIGDADDY,
   loadLITTLEBOY,
@@ -15,16 +16,29 @@ import {
   WALLET_FILE_LOCATION,
 } from './utils'
 import { ethers, Wallet, utils } from 'ethers'
+import abi from './Trustee.json'
 import { readFileSync } from 'fs'
-
 
 yargs(hideBin(process.argv))
   .command('init', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     saveRandomWallet()
     const client = await Client.create(loadWallet(), { env })
-
-
+    const contractABI = abi.abi
+    console.log(contractABI)
+    const provider = new ethers.providers.WebSocketProvider(
+      `wss://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_WEBSOCKET}`
+    )
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(
+      '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
+      contractABI,
+      signer
+    )
+    contract.on('Withdraw', () => {
+      // send logic here
+      console.log('withdraw')
+    })
     render(
       <Text>
         New wallet with address {client.address} saved at {WALLET_FILE_LOCATION}
@@ -36,7 +50,10 @@ yargs(hideBin(process.argv))
     saveRandomWallet()
     const client = await Client.create(loadBIGDADDY(), { env })
 
-    const provider = new ethers.providers.AlchemyProvider("goerli", loadApiKey());
+    const provider = new ethers.providers.AlchemyProvider(
+      'goerli',
+      loadApiKey()
+    )
 
     render(
       <Text>
@@ -49,10 +66,32 @@ yargs(hideBin(process.argv))
     saveRandomWallet()
     const client = await Client.create(loadLITTLEBOY(), { env })
 
-
     render(
       <Text>
         New wallet with address {client.address} saved at {WALLET_FILE_LOCATION}
+      </Text>
+    )
+  })
+  .command('Withdraw', 'call ableToWithdraw', {}, async (argv: any) => {
+    const { env } = argv
+    saveRandomWallet()
+    const client = await Client.create(loadLITTLEBOY(), { env })
+    const provider = new ethers.providers.WebSocketProvider(
+      `wss://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_WEBSOCKET}`
+    )
+    const signer = provider.getSigner()
+    const contractABI = abi.abi
+
+    const contract = new ethers.Contract(
+      '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
+      contractABI,
+      signer
+    )
+    await contract.ableToWithdraw()
+    render(
+      <Text>
+        little boy try to withdraw money from {client.address} saved at{' '}
+        {WALLET_FILE_LOCATION}
       </Text>
     )
   })

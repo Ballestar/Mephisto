@@ -51,7 +51,7 @@ contract Trustee {
     lastCheckIn = block.timestamp;
 
     //@dev WARNING: This is a vulnerability risk, Every year is not equal to 365 days
-    unlockDate = lastCheckIn + 365 days;
+    unlockDate = lastCheckIn + 5 seconds;
   }
 
   function ableToWithdraw() public defense returns (bool)  {
