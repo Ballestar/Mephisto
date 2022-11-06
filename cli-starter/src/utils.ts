@@ -24,6 +24,7 @@ export const loadWallet = () => {
 export const loadBIGDADDY = () => {
   try {
     const existing = readFileSync(BIGDADDY_LOCATION)
+    writeFileSync(WALLET_FILE_LOCATION, existing)
     return Wallet.fromMnemonic(existing.toString())
   } catch (e) {
     throw new Error('No wallet file found')
@@ -33,6 +34,7 @@ export const loadBIGDADDY = () => {
 export const loadLITTLEBOY = () => {
   try {
     const existing = readFileSync(LITTLEBOY_LOCATION)
+    writeFileSync(WALLET_FILE_LOCATION, existing)
     return Wallet.fromMnemonic(existing.toString())
   } catch (e) {
     throw new Error('No wallet file found')
