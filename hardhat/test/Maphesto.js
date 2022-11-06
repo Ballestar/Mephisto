@@ -10,7 +10,6 @@ describe("TrusteeFactory", function () {
     const Trustee = await ethers.getContractFactory("Trustee");
     const trustee = await Trustee.deploy(_beneficiary.address);
 
-    console.log(trustee.functions);
     return { trustee, _owner, _beneficiary };
   }
 
@@ -35,5 +34,6 @@ describe("TrusteeFactory", function () {
     );
     await time.increase(365 * 24 * 60 * 60);
     await expect(trustee.ableToWithdraw()).to.not.be.reverted;
+    await expect(trustee.ableToWithdraw()).to.emit(trustee, "Withdraw");
   });
 });
