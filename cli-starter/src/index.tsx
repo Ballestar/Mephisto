@@ -26,7 +26,7 @@ yargs(hideBin(process.argv))
     'Initialize wallet',
     {
       //littleboy: { type: 'string', demand: true },
-      payload: { type: 'string', demand: true },
+      /*payload: { type: 'string', demand: true },*/
     },
     async (argv: any) => {
       const { /*littleboy,*/ payload, env } = argv
@@ -42,7 +42,9 @@ yargs(hideBin(process.argv))
         contractABI,
         signer
       )
+      console.log("LEEDLE LEEDLE")
       contract.on('Withdraw', async() => {
+        console.log("LEEDLE LEEDLE LEEDLE")
         const conversation =  await client.conversations.newConversation(await loadLITTLEBOY().getAddress())
         const sent = await conversation.send(payload)
         render(<Message {...sent} />)
@@ -51,7 +53,6 @@ yargs(hideBin(process.argv))
       render(
         <Text>
           Enrolled {client.address}
-          <br />
           Mephistopheles is at your service
         </Text>
       )
