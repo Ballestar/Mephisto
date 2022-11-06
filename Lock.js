@@ -72,7 +72,7 @@ describe("Lock", function () {
         const { lock, unlockTime, otherAccount } = await loadFixture(
           deployOneYearLockFixture
         );
-
+        await time.increase();
         // We can increase the time in Hardhat Network
         await time.increaseTo(unlockTime);
 

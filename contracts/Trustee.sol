@@ -6,7 +6,7 @@ import "hardhat/console.sol";
 /// @title Mephisto
 /// @author Turan Vural and Johans Ballestar
 /// @notice trustless deadman's switch
-contract Beneficiary {
+contract Trustee {
 
   string version;
   uint lastCheckIn;
@@ -15,8 +15,11 @@ contract Beneficiary {
   address payable beneficiary;
 
   // set the `owner` of the contract and log first `checkIn`
-  constructor(address _p) {
-    //@TODO: Constructor Logic?
+  constructor(address payable _beneficiary) {
+    owner = payable(msg.sender);
+    beneficiary = _beneficiary;
+    version = "1.0.0";
+    checkIn();
   }
 
   // a function modifier used to restrict most write functions to only
@@ -33,12 +36,6 @@ contract Beneficiary {
     _;
   }
 
-  function initialize() public onlyOwner{
-    owner = payable(msg.sender);
-    version = "1.0.0";
-    checkIn();
-  }
-
   /// @notice This function is restricted to work with only the contract owner and kills the switch
   function kill() public onlyOwner {
     selfdestruct(owner);
@@ -52,11 +49,13 @@ contract Beneficiary {
   /// @dev only th owner can check in
   function checkIn() public onlyOwner {
     lastCheckIn = block.timestamp;
-    unlockDate = lastCheckIn + 1 years;
+
+    //@dev WARNING: This is a vulnerability risk, Every year is not equal to 365 days
+    unlockDate = lastCheckIn + 365 days;
   }
 
-  function ableToWithdraw() public defense {
-    require(now >= unlockDate);
+  function ableToWithdraw() public defense returns (bool)  {
+    require(block.timestamp >= unlockDate, "You can't withdraw yet");
     return true;
   }
 
@@ -73,6 +72,14 @@ contract Beneficiary {
   /// @return TODO
   function getOwner() public view defense returns (address) {
     return owner;
+  }
+
+
+  /// @notice TODO
+  /// @dev TODO
+  /// @return TODO
+  function getBeneficiary() public view defense returns (address) {
+    return beneficiary;
   }
 
   /// @notice TODO
