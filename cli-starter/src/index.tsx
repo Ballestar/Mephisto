@@ -41,13 +41,12 @@ yargs(hideBin(process.argv))
     })
     render(
       <Text>
-        New wallet with address {client.address} saved at {WALLET_FILE_LOCATION}
+        Enrolled {client.address}
       </Text>
     )
   })
   .command('BIGDADDY', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
-    saveRandomWallet()
     const client = await Client.create(loadBIGDADDY(), { env })
 
     const provider = new ethers.providers.AlchemyProvider(
@@ -63,7 +62,6 @@ yargs(hideBin(process.argv))
   })
   .command('LITTLEBOY', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
-    saveRandomWallet()
     const client = await Client.create(loadLITTLEBOY(), { env })
 
     render(
