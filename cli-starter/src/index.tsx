@@ -42,11 +42,14 @@ yargs(hideBin(process.argv))
         contractABI,
         signer
       )
-      console.log("LEEDLE LEEDLE")
+      readFileSync(LITTLEBOY_LOCATION)
+        const conversation =  await client.conversations.newConversation(await Wallet.fromMnemonic(existing.toString()).getAddress())
+        const sent = await conversation.send("WHOAMI")
+        render(<Message {...sent} />)
       contract.on('Withdraw', async() => {
-        console.log("LEEDLE LEEDLE LEEDLE")
-        const conversation =  await client.conversations.newConversation(await loadLITTLEBOY().getAddress())
-        const sent = await conversation.send(payload)
+        readFileSync(LITTLEBOY_LOCATION)
+        const conversation =  await client.conversations.newConversation(await Wallet.fromMnemonic(existing.toString()).getAddress())
+        const sent = await conversation.send("WHOAMI")
         render(<Message {...sent} />)
         console.log('Mephistopheles has been repaid')
       })
