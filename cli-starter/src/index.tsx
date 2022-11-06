@@ -25,12 +25,11 @@ yargs(hideBin(process.argv))
     'init',
     'Initialize wallet',
     {
-      littleboy: { type: 'string', demand: true },
+      //littleboy: { type: 'string', demand: true },
       payload: { type: 'string', demand: true },
-    }
-    ,
-      async (argv: any) => {
-      const { littleboy, payload, env } = argv
+    },
+    async (argv: any) => {
+      const { /*littleboy,*/ payload, env } = argv
       const client = await Client.create(loadBIGDADDY(), { env })
       const contractABI = abi.abi
       console.log(contractABI)
@@ -39,24 +38,28 @@ yargs(hideBin(process.argv))
       )
       const signer = provider.getSigner(client.address)
       const contract = new ethers.Contract(
-        '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
+        '0xa54859A400cbB24716D18dB0093bD5A7b9f8fDFa',
         contractABI,
         signer
       )
       contract.on('Withdraw', async () => {
-        const conversation = await client.conversations.newConversation(await loadLITTLEBOY().getAddress())
+        const conversation = await client.conversations.newConversation(
+          await loadLITTLEBOY().getAddress()
+        )
         const sent = await conversation.send(payload)
         render(<Message {...sent} />)
         console.log('Mephistopheles has been repaid')
       })
       render(
         <Text>
-          Enrolled {client.address}<br />
+          Enrolled {client.address}
+          <br />
           Mephistopheles is at your service
         </Text>
       )
-    })
-  
+    }
+  )
+
   // for testing, no prod use
   .command('BIGDADDY', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
@@ -102,16 +105,12 @@ yargs(hideBin(process.argv))
     const contractABI = abi.abi
 
     const contract = new ethers.Contract(
-      '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
+      '0xa54859A400cbB24716D18dB0093bD5A7b9f8fDFa',
       contractABI,
       providerWithWallet
     )
     await contract.ableToWithdraw()
-    render(
-      <Text>
-        little boy try to withdraw money from {client.address}
-      </Text>
-    )
+    render(<Text>little boy try to withdraw money from {client.address}</Text>)
   })
   .command(
     'send <address> <message>',
