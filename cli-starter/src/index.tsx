@@ -8,6 +8,7 @@ import { MessageList, MessageStream, Message } from './renderers'
 import {
   loadBIGDADDY,
   loadLITTLEBOY,
+  LITTLEBOY_LOCATION,
   loadMephisto,
   loadApiKey,
   loadWallet,
@@ -22,14 +23,13 @@ import { readFileSync } from 'fs'
 yargs(hideBin(process.argv))
   .command('init', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
-    saveRandomWallet()
-    const client = await Client.create(loadWallet(), { env })
+    const client = await Client.create(loadBIGDADDY(), { env })
     const contractABI = abi.abi
     console.log(contractABI)
     const provider = new ethers.providers.WebSocketProvider(
       `wss://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_WEBSOCKET}`
     )
-    const signer = provider.getSigner()
+    const signer = provider.getSigner(client.address)
     const contract = new ethers.Contract(
       '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
       contractABI,
@@ -74,18 +74,24 @@ yargs(hideBin(process.argv))
   })
   .command('Withdraw', 'call ableToWithdraw', {}, async (argv: any) => {
     const { env } = argv
-    saveRandomWallet()
     const client = await Client.create(loadLITTLEBOY(), { env })
-    const provider = new ethers.providers.WebSocketProvider(
-      `wss://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_WEBSOCKET}`
+    const provider = new ethers.providers.AlchemyProvider(
+      'optimism-goerli',
+      process.env.ALCHEMY_WEBSOCKET
     )
-    const signer = provider.getSigner()
+    let path = "m/44'/60'/0'/0/0"
+    const mneumonic =
+      'swallow license seed summer stadium accident maximum term cushion roof blood detect'
+    const providerWithWallet = new ethers.Wallet(
+      '5b513444a764686dd26f98ed00626ebaa0ae4b0453fb43f2519b83943aad07ac',
+      provider
+    )
     const contractABI = abi.abi
 
     const contract = new ethers.Contract(
       '0x6f6f8e11d0a6abD4a297C99b47Dc990e8D8B852c',
       contractABI,
-      signer
+      providerWithWallet
     )
     await contract.ableToWithdraw()
     render(
