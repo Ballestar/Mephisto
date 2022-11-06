@@ -36,7 +36,7 @@ yargs(hideBin(process.argv))
       signer
     )
     contract.on('Withdraw', () => {
-      // send logic here
+      // send to little boy
       console.log('withdraw')
     })
     render(
