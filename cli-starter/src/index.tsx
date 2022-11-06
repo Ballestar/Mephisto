@@ -57,6 +57,8 @@ yargs(hideBin(process.argv))
         </Text>
       )
     })
+  
+  // for testing, no prod use
   .command('BIGDADDY', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     const client = await Client.create(loadBIGDADDY(), { env })
@@ -72,6 +74,8 @@ yargs(hideBin(process.argv))
       </Text>
     )
   })
+
+  // for testing, no prod use
   .command('LITTLEBOY', 'Initialize wallet', {}, async (argv: any) => {
     const { env } = argv
     const client = await Client.create(loadLITTLEBOY(), { env })
