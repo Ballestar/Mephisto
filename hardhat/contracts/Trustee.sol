@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import "hardhat/console.sol";
-
 /// @title Mephisto
 /// @author Turan Vural and Johans Ballestar
 /// @notice trustless deadman's switch
@@ -13,6 +11,8 @@ contract Trustee {
   uint unlockDate;
   address payable owner;
   address payable beneficiary;
+
+  event Withdraw ();
 
   // set the `owner` of the contract and log first `checkIn`
   constructor(address payable _beneficiary) {
@@ -56,6 +56,7 @@ contract Trustee {
 
   function ableToWithdraw() public defense returns (bool)  {
     require(block.timestamp >= unlockDate, "You can't withdraw yet");
+    emit Withdraw();
     return true;
   }
 
