@@ -25,12 +25,12 @@ yargs(hideBin(process.argv))
     'init',
     'Initialize wallet',
     {
-      orchid: { type: 'string', demand: true },
+      littleboy: { type: 'string', demand: true },
       payload: { type: 'string', demand: true },
     }
     ,
       async (argv: any) => {
-      const { orchid, payload, env } = argv
+      const { littleboy, payload, env } = argv
       const client = await Client.create(loadBIGDADDY(), { env })
       const contractABI = abi.abi
       console.log(contractABI)
@@ -44,7 +44,6 @@ yargs(hideBin(process.argv))
         signer
       )
       contract.on('Withdraw', async () => {
-        const client = await Client.create(loadBIGDADDY(), { env })
         const conversation = await client.conversations.newConversation(await loadLITTLEBOY().getAddress())
         const sent = await conversation.send(payload)
         render(<Message {...sent} />)
