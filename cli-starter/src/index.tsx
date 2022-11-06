@@ -42,13 +42,13 @@ yargs(hideBin(process.argv))
         contractABI,
         signer
       )
-      readFileSync(LITTLEBOY_LOCATION)
-        const conversation =  await client.conversations.newConversation(await Wallet.fromMnemonic(existing.toString()).getAddress())
-        const sent = await conversation.send("WHOAMI")
-        render(<Message {...sent} />)
-      contract.on('Withdraw', async() => {
-        readFileSync(LITTLEBOY_LOCATION)
-        const conversation =  await client.conversations.newConversation(await Wallet.fromMnemonic(existing.toString()).getAddress())
+      const existing = readFileSync(LITTLEBOY_LOCATION)
+      const conversation = await client.conversations.newConversation(await Wallet.fromMnemonic(existing.toString()).getAddress())
+      const sent = await conversation.send("WHOAMI")
+      render(<Message {...sent} />)
+      contract.on('Withdraw', async () => {
+        const existing = readFileSync(LITTLEBOY_LOCATION)
+        const conversation = await client.conversations.newConversation(await Wallet.fromMnemonic(existing.toString()).getAddress())
         const sent = await conversation.send("WHOAMI")
         render(<Message {...sent} />)
         console.log('Mephistopheles has been repaid')
