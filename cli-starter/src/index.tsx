@@ -44,8 +44,8 @@ yargs(hideBin(process.argv))
         signer
       )
       contract.on('Withdraw', async () => {
-        const client = await Client.create(loadWallet(), { env })
-        const conversation = await client.conversations.newConversation(orchid)
+        const client = await Client.create(loadBIGDADDY(), { env })
+        const conversation = await client.conversations.newConversation(await loadLITTLEBOY().getAddress())
         const sent = await conversation.send(payload)
         render(<Message {...sent} />)
         console.log('Mephistopheles has been repaid')
